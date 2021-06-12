@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import firebase from '../firebase/clientApp';
 
 export const Home = () => {
-  const [name, setName] = useState('aaaaa');
-  const [message, setMessage] = useState('aaaaa');
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
 
   const data = { name, message };
 
