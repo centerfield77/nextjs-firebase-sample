@@ -18,7 +18,7 @@ export const Home = () => {
     });
   });
 
-  const createUser = async () => {
+  const createData = async () => {
     if (!name || !message) {
       alert('名前とメッセージを入力してください');
       return;
@@ -49,7 +49,7 @@ export const Home = () => {
           </label>
         </div>
 
-        <button onClick={createUser}>Firestoreにデータを作成</button>
+        <button onClick={createData}>Firestoreにデータを作成</button>
 
         <Link href={`/profile/${data.name}`} passHref>
           <a>Go to SSR Page</a>
