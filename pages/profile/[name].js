@@ -2,7 +2,7 @@ import Head from 'next/head';
 
 import { getProfileData } from '../../fetchData/getProfileData';
 
-export default function SSRPage({ data }) {
+const SSRPage = ({ data }) => {
   const { name, profile } = data;
 
   return (
@@ -19,7 +19,7 @@ export default function SSRPage({ data }) {
       </main>
     </div>
   );
-}
+};
 
 export const getServerSideProps = async ({ params }) => {
   const { name } = params;
@@ -29,3 +29,5 @@ export const getServerSideProps = async ({ params }) => {
   }
   return { props: { data: { name, profile } } };
 };
+
+export default SSRPage;
