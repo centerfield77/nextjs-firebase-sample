@@ -1,46 +1,57 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect } from 'react';
-import { useUser } from '../context/userContext';
+import { useState, useEffect } from 'react';
 import firebase from '../firebase/clientApp';
 
-export default function Home() {
-  // Our custom hook to get context values
-  const { loadingUser, user } = useUser();
+export const Home = () => {
+  const [name, setName] = useState('aaaaa');
+  const [message, setMessage] = useState('aaaaa');
 
-  const profile = { username: 'nextjs_user', message: 'Awesome!!' };
+  const data = { name, message };
 
   useEffect(() => {
-    if (!loadingUser) {
-      // You know that the user is loaded: either logged in or out!
-      console.log(user);
-    }
-    // You also have your firebase app initialized
-    console.log(firebase);
-  }, [loadingUser, user]);
+    firebase.auth().onAuthStateChanged(async (user) => {
+      // 未ログイン時は匿名ユーザーを作成する
+      if (!user) {
+        firebase.auth().signInAnonymously();
+      }
+    });
+  });
 
   const createUser = async () => {
+    if (!name || !message) {
+      alert('名前とメッセージを入力してください');
+      return;
+    }
     const db = firebase.firestore();
-    await db.collection('profile').doc(profile.username).set(profile);
-    alert('User created!!');
+    await db.collection('profile').doc(name).set(data);
+    alert('Firestoreにデータを作成できました！');
   };
 
   return (
     <div className="container">
       <Head>
-        <title>Next.js w/ Firebase Client-Side</title>
+        <title>Next.js / Firestore</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
-        <h1 className="title">Next.js / Firebase クライアントサイド</h1>
-        <p className="description">Fill in your credentials to get started</p>
+        <h1 className="title">Next.js / Firebase CSR</h1>
+        <p className="description">名前とメッセージを入力してください。</p>
+        <div className="labelBox">
+          <label>
+            名前：
+            <input value={name} onChange={(e) => setName(e.target.value)} />
+          </label>
+          <label>
+            メッセージ：
+            <input value={message} onChange={(e) => setMessage(e.target.value)} />
+          </label>
+        </div>
 
-        <p className="description">Cloud Firestore Security Rules write permissions are required for adding users</p>
-        <button onClick={createUser}>Create 'nextjs_user'</button>
+        <button onClick={createUser}>Firestoreにデータを作成</button>
 
-        <p className="description">Please press the link below after adding the user</p>
-        <Link href={`/profile/${profile.username}`} passHref>
+        <Link href={`/profile/${data.name}`} passHref>
           <a>Go to SSR Page</a>
         </Link>
       </main>
@@ -93,6 +104,10 @@ export default function Home() {
           font-size: 1.5em;
         }
 
+        label {
+          margin: 10px;
+        }
+
         .title a {
           color: #0070f3;
           text-decoration: none;
@@ -118,6 +133,10 @@ export default function Home() {
         .description {
           line-height: 1.5;
           font-size: 1.5rem;
+        }
+
+        .labelBox {
+          display: flex;
         }
 
         code {
@@ -191,4 +210,6 @@ export default function Home() {
       `}</style>
     </div>
   );
-}
+};
+
+export default Home;
